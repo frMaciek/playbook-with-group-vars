@@ -1,0 +1,31 @@
+---
+  - hosts: targets
+    become: True
+    tasks:
+
+      - name: creating a motd
+        ansible.builtin.file:
+         path: /home/vagrant/motd
+         state: touch
+
+      - name: Write something to this file
+        shell: printf ' Welcome \n
+            to the \n
+            *** SERVER *** \n' >> /home/vagrant/motd
+
+      - name: copying a motd file
+        ansible.builtin.copy:
+          src: /home/vagrant/motd
+          remote_src: yes
+          dest: /etc
+          mode: u+wrx,g+r,o+r
+
+      - debug:
+          var: server_wifi_ssid
+
+      - name: sending wpa_supplicant.conf file to the machine
+        ansible.builtin.copy:
+         src: wpa_supplicant.conf
+         remote_src: no
+         dest: /etc/wpa_supplicant/wpa_supplicant.conf
+         mode: u+wr
